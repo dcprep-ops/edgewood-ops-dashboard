@@ -6,8 +6,16 @@
 <title>Edgewood Ops Dashboard</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Edgewood">
+<meta name="apple-mobile-web-app-title" content="Edgewood Ops Dashboard">
+<meta name="application-name" content="Edgewood Ops Dashboard">
 <meta name="theme-color" content="#1a3a5c">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjMGQ5NDg4IiByeD0iNiIvPjxyZWN0IHg9IjQiIHk9IjQiIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCIgcng9IjIiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC45KSIvPjxyZWN0IHg9IjE4IiB5PSI0IiB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHJ4PSIyIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuOSkiLz48cmVjdCB4PSI0IiB5PSIxOCIgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiByeD0iMiIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjkpIi8+PHJlY3QgeD0iMTgiIHk9IjE4IiB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHJ4PSIyIiBmaWxsPSJ3aGl0ZSIvPjwvc3ZnPg==">
+<link rel="apple-touch-icon" href="icon.png">
+<meta property="og:title" content="Edgewood Ops Dashboard">
+<meta property="og:description" content="DC Prep Edgewood cluster — SY 2026-27">
+<meta property="og:image" content="share.png">
+<link rel="manifest" href="data:application/json;charset=utf-8,%7B%22name%22%3A%22Benning%20Ops%20Dashboard%22%2C%22short_name%22%3A%22Benning%20Ops%20Dashboard%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%231a3a5c%22%2C%22theme_color%22%3A%22%231a3a5c%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22icon.png%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fpng%22%7D%5D%7D">
 <style>
 :root {
   --navy:#1a3a5c;--teal:#0d9488;--teal-lt:#e1f5ee;
@@ -30,6 +38,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 .section-list{padding:20px 16px}
 .section-card{display:flex;align-items:center;gap:14px;background:var(--card);border:0.5px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:10px;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .section-card:active{border-color:var(--teal)}
+.cell-icon-box{width:40px;height:40px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cell-icon-box.teal{background:var(--teal)}
+.cell-icon-box i{color:#fff;font-size:20px}
 .section-icon{font-size:22px;flex-shrink:0;width:36px;text-align:center}
 .section-text{flex:1}
 .section-name{font-size:15px;font-weight:600;color:var(--navy)}
@@ -93,7 +104,43 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 .spark-low{background:var(--red)}.spark-null{background:var(--border)}
 .pct-big{font-size:28px;font-weight:700}
 
-/* READINESS */
+/* TABS */
+.camp-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:16px}
+.camp-tab{flex:1;padding:10px;text-align:center;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;-webkit-tap-highlight-color:transparent}
+.camp-tab.active{color:var(--navy);border-bottom-color:var(--teal);font-weight:700}
+/* IMPROVE */
+.improve-item{display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-bottom:0.5px solid var(--border);font-size:12px}
+.improve-item:last-child{border-bottom:none}
+.improve-name{color:var(--navy);flex:1;padding-right:10px;font-weight:500}
+.improve-right{text-align:right;flex-shrink:0}
+.flag-rate-val{font-size:14px;font-weight:700;color:var(--red)}
+.prior-rate-val{font-size:10px;color:var(--muted);display:block}
+.badge-focus{background:var(--red-lt);color:#991b1b;font-size:10px;font-weight:600;padding:1px 7px;border-radius:10px;margin-left:6px}
+.badge-improving{background:var(--teal-lt);color:#0f6e56;font-size:10px;font-weight:600;padding:1px 7px;border-radius:10px;margin-left:6px}
+.badge-stable{background:var(--lt);color:var(--muted);font-size:10px;font-weight:600;padding:1px 7px;border-radius:10px;margin-left:6px}
+
+/* READINESS — matching BOY Readiness Dashboard */
+.cr-section { margin-bottom: 20px; }
+.cr-section-hdr { font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:8px 0 6px;border-bottom:1px solid var(--border);margin-bottom:2px; }
+.cr-section-hdr.needs  { color:var(--red); }
+.cr-section-hdr.minor  { color:var(--amber); }
+.cr-section-hdr.full   { color:var(--teal); }
+.cr-section-hdr.unseen { color:var(--muted); }
+.cr-row { display:flex;align-items:flex-start;padding:10px 0;border-bottom:0.5px solid var(--border); }
+.cr-row:last-child { border-bottom:none; }
+.cr-left { display:flex;align-items:flex-start;gap:10px;flex:1; }
+.cr-dot { width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:4px; }
+.dot-full   { background:var(--teal); }
+.dot-minor  { background:var(--amber); }
+.dot-needs  { background:var(--red); }
+.dot-unseen { background:var(--border); }
+.cr-name { font-size:14px;font-weight:500;color:var(--navy); }
+.cr-grade { font-size:12px;color:var(--muted);margin-left:2px; }
+.cr-date { font-size:11px;color:var(--muted);margin-top:3px; }
+.cr-assessment { font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;margin-left:4px; }
+.asmnt-full  { background:#f0fdf4;color:#166534; }
+.asmnt-minor { background:#fef9c3;color:#854d0e; }
+.asmnt-needs { background:#fef2f2;color:#991b1b; }
 .ready-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
 .ready-stat{background:var(--lt);border-radius:10px;padding:12px 8px;text-align:center}
 .ready-val{font-size:22px;font-weight:700}
@@ -109,11 +156,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 </head>
 <body>
 
-<div class="hdr">
+<div class="hdr" id="hdr-main">
   <div class="hdr-brand">DC Prep</div>
-  <div class="hdr-cluster">Edgewood</div>
+  <div class="hdr-cluster">Edgewood Ops Dashboard</div>
   <div class="hdr-schools">EEC · EMC</div>
   <div class="hdr-meta" id="meta"></div>
+</div>
+<div class="hdr hdr-detail" id="hdr-detail" style="display:none">
+  <button onclick="go('home')" style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:6px 12px;font-size:13px;font-weight:600;color:#fff;cursor:pointer;margin-bottom:10px;-webkit-tap-highlight-color:transparent">← Back to Edgewood Ops Dashboard</button>
+  <div class="hdr-cluster" id="hdr-detail-title"></div>
+  <div class="hdr-schools">EEC · EMC</div>
 </div>
 
 <!-- LANDING -->
@@ -121,15 +173,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
   <div id="home-loading" class="loading-msg">Loading…</div>
   <div class="section-list" id="section-list" style="display:none">
     <div class="section-card" onclick="go('drills')">
-      <div class="section-icon">🚨</div>
+      <div class="cell-icon-box"><i class="ti ti-alert-triangle"></i></div>
       <div class="section-text">
-        <div class="section-name">Drills</div>
+        <div class="section-name">Evacuation &amp; Lockdown Drills</div>
         <div class="section-sub" id="sub-drills">Evacuation &amp; lockdown compliance</div>
       </div>
       <div class="section-arrow">›</div>
     </div>
     <div class="section-card" onclick="go('arrival')">
-      <div class="section-icon">🚗</div>
+      <div class="cell-icon-box teal"><i class="ti ti-car"></i></div>
       <div class="section-text">
         <div class="section-name">Arrival &amp; Dismissal</div>
         <div class="section-sub" id="sub-arrival">Last observation window</div>
@@ -137,15 +189,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
       <div class="section-arrow">›</div>
     </div>
     <div class="section-card" onclick="go('custodial')">
-      <div class="section-icon">🧹</div>
+      <div class="cell-icon-box"><i class="ti ti-spray"></i></div>
       <div class="section-text">
-        <div class="section-name">Custodial</div>
+        <div class="section-name">Custodial Walkthroughs</div>
         <div class="section-sub" id="sub-custodial">Walkthrough completion trend</div>
       </div>
       <div class="section-arrow">›</div>
     </div>
     <div class="section-card" onclick="go('readiness')">
-      <div class="section-icon">📚</div>
+      <div class="cell-icon-box teal"><i class="ti ti-chalkboard"></i></div>
       <div class="section-text">
         <div class="section-name">Classroom Readiness</div>
         <div class="section-sub" id="sub-readiness">BOY readiness by classroom</div>
@@ -163,8 +215,61 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 <div id="d-readiness" class="detail"></div>
 
 <script>
+
+const CLASSROOMS = {
+  AEC: [
+    {name:'American',grade:'EC'},{name:'Gallaudet',grade:'EC'},{name:'George Mason',grade:'EC'},
+    {name:'Johns Hopkins',grade:'EC'},{name:'Syracuse',grade:'EC'},{name:'Williams',grade:'EC'},
+    {name:'Northwestern',grade:'K'},{name:'UChicago',grade:'K'},{name:'UMichigan',grade:'K'},
+    {name:'Gonzaga',grade:'1'},{name:'UOregon',grade:'1'},{name:'Pepperdine',grade:'1'},
+    {name:'Morehouse',grade:'2'},{name:'Spelman',grade:'2'},{name:'Xavier',grade:'2'},
+    {name:'Cornell',grade:'3'},{name:'Dartmouth',grade:'3'},{name:'UPenn',grade:'3'},
+  ],
+  AMC: [
+    {name:'GWU',grade:'4'},{name:'Georgetown',grade:'4'},{name:'Howard',grade:'4'},
+    {name:'UMD',grade:'5'},{name:'UNC',grade:'5'},{name:'UVA',grade:'5'},
+    {name:'FAMU',grade:'6'},{name:'Hampton',grade:'6'},{name:'Tuskegee',grade:'6'},
+    {name:'Princeton',grade:'7'},{name:'Stanford',grade:'7'},
+    {name:'Harvard',grade:'8'},{name:'Yale',grade:'8'},
+  ],
+  BEC: [
+    {name:'American',grade:'EC'},{name:'Gallaudet',grade:'EC'},{name:'George Mason',grade:'EC'},
+    {name:'Johns Hopkins',grade:'EC'},{name:'Syracuse',grade:'EC'},{name:'Williams',grade:'EC'},
+    {name:'Northwestern',grade:'K'},{name:'UChicago',grade:'K'},{name:'UMichigan',grade:'K'},
+    {name:'Gonzaga',grade:'1'},{name:'UOregon',grade:'1'},{name:'Pepperdine',grade:'1'},
+    {name:'Morehouse',grade:'2'},{name:'Spelman',grade:'2'},{name:'Xavier',grade:'2'},
+    {name:'Cornell',grade:'3'},{name:'Dartmouth',grade:'3'},{name:'UPenn',grade:'3'},
+  ],
+  BMC: [
+    {name:'GWU',grade:'4'},{name:'Georgetown',grade:'4'},{name:'Howard',grade:'4'},
+    {name:'UMD',grade:'5'},{name:'UNC',grade:'5'},{name:'UVA',grade:'5'},
+    {name:'FAMU',grade:'6'},{name:'Hampton',grade:'6'},{name:'Tuskegee',grade:'6'},
+    {name:'Princeton',grade:'7'},{name:'Stanford',grade:'7'},
+    {name:'Harvard',grade:'8'},{name:'Yale',grade:'8'},
+  ],
+  EEC: [
+    {name:'American',grade:'EC'},{name:'Gallaudet',grade:'EC'},{name:'George Mason',grade:'EC'},
+    {name:'Johns Hopkins',grade:'EC'},{name:'Syracuse',grade:'EC'},
+    {name:'Northwestern',grade:'K'},{name:'UChicago',grade:'K'},{name:'UMichigan',grade:'K'},
+    {name:'Gonzaga',grade:'1'},{name:'UOregon',grade:'1'},{name:'Pepperdine',grade:'1'},
+    {name:'Morehouse',grade:'2'},{name:'Spelman',grade:'2'},{name:'Xavier',grade:'2'},
+    {name:'Cornell',grade:'3'},{name:'Dartmouth',grade:'3'},{name:'UPenn',grade:'3'},
+  ],
+  EMC: [
+    {name:'GWU',grade:'4'},{name:'Georgetown',grade:'4'},{name:'Howard',grade:'4'},
+    {name:'UMD',grade:'5'},{name:'UNC',grade:'5'},{name:'UVA',grade:'5'},
+    {name:'FAMU',grade:'6'},{name:'Hampton',grade:'6'},{name:'Tuskegee',grade:'6'},
+    {name:'Princeton',grade:'7'},{name:'Stanford',grade:'7'},
+    {name:'Harvard',grade:'8'},{name:'Yale',grade:'8'},
+  ],
+};
+
+function gradeLabel(g) {
+  return g==='EC'?'EC':g==='K'?'Kindergarten':g+(g==='1'?'st':g==='2'?'nd':g==='3'?'rd':'th')+' Grade';
+}
+
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwPbhFWpzKX6S6seb1c0QKplVM22LjZG6bkGMBnTNopry6dDr5YGtffKKR3EsFQ77n5BQ/exec';
-const CLUSTER  = 'Edgewood';   // e.g. 'Anacostia'
+const CLUSTER  = 'Benning';   // e.g. 'Anacostia'
 const CAMPUSES = ["EEC", "EMC"];   // e.g. ['AEC','AMC']
 
 let OPS = null, READINESS = null, WIN = 14;
@@ -178,6 +283,10 @@ function go(section) {
   const dest = section === 'home' ? 'home' : 'd-'+section;
   const el = document.getElementById(dest);
   if (el) { el.style.display = ''; el.classList.add('active'); }
+  // Toggle headers
+  const isHome = section === 'home';
+  document.getElementById('hdr-main').style.display   = isHome ? '' : 'none';
+  document.getElementById('hdr-detail').style.display = isHome ? 'none' : '';
   window.scrollTo(0,0);
   if (section !== 'home' && OPS) render(section);
 }
@@ -190,7 +299,10 @@ function render(s) {
 }
 
 function backBar(title) {
-  return `<div class="back-bar" onclick="go('home')"><span class="back-txt">← Back</span><span class="back-title">${title}</span></div>`;
+  document.getElementById('hdr-main').style.display = 'none';
+  document.getElementById('hdr-detail').style.display = '';
+  document.getElementById('hdr-detail-title').textContent = title;
+  return '';  // no inline back bar
 }
 
 function e(tag, cls, html) {
@@ -271,20 +383,21 @@ function renderDrills() {
     }).join('');
   }
 
-  let html = backBar('Drills') + '<div class="detail-body">';
+  let html = backBar('Evacuation & Lockdown Drills') + '<div class="detail-body">';
 
   CAMPUSES.forEach(campus => {
     const comp = (OPS.drills?.compliance||[]).find(d=>d.campus===campus);
     const last = (OPS.drills?.lastDrills||[]).find(d=>d.campus===campus);
 
-    html += `<div class="card"><div class="card-label">${campus}</div>`;
+    html += `<div class="card">
+      <div style="font-size:18px;font-weight:700;color:var(--navy);padding-bottom:12px;margin-bottom:12px;border-bottom:2px solid var(--border)">${campus}</div>`;
     html += `<div class="drill-type-lbl">Evacuation</div>`;
     html += `<div class="month-row">${dots(comp?.evac)}</div>`;
     html += `<div class="drill-type-lbl" style="margin-top:16px">Lockdown</div>`;
     html += `<div class="month-row">${dots(comp?.lock)}</div>`;
     html += '</div>';
 
-    html += '<div class="card"><div class="card-label">Most recent — '+campus+'</div>';
+    html += '<div class="card"><div style="font-size:16px;font-weight:700;color:var(--navy);padding-bottom:10px;margin-bottom:10px;border-bottom:1.5px solid var(--border)">Most recent drills — '+campus+'</div>';
     ['evac','lock'].forEach(type => {
       const drill = last?.[type];
       const label = type==='evac' ? 'Evacuation' : 'Lockdown';
@@ -362,7 +475,7 @@ function ratingTable(curr, prior) {
 function renderArrival() {
   const con = document.getElementById('d-arrival');
   const cl = clusterArr();
-  let html = backBar('Arrival &amp; Dismissal') + '<div class="detail-body">';
+  let html = backBar('Arrival & Dismissal') + '<div class="detail-body">';
   if (!cl) { html += '<div class="no-data">No data available.</div></div>'; con.innerHTML=html; return; }
 
   ['arrival','dismissal'].forEach(session => {
@@ -395,7 +508,7 @@ function renderCustodial() {
   const con = document.getElementById('d-custodial');
   const cl = clusterCust();
   const cw = cl?.window || WIN;
-  let html = backBar('Custodial') + '<div class="detail-body">';
+  let html = backBar('Custodial Walkthroughs') + '<div class="detail-body">';
   if (!cl) { html += '<div class="no-data">No custodial data available.</div></div>'; con.innerHTML=html; return; }
 
   const pct = cl.currentPct, prev = cl.priorPct;
@@ -418,6 +531,40 @@ function renderCustodial() {
   const lbls = (cl.trend||[]).map(m=>`<span style="font-size:9px;color:var(--muted);flex:1;text-align:center">${m.label}</span>`).join('');
   html += `<div style="display:flex;gap:3px">${lbls}</div></div>`;
 
+  // Where we can improve — item-level flag frequency
+  if (cl.flags?.length) {
+    html += '<div class="card"><div class="card-label">Where we can improve</div>';
+    cl.flags.forEach(f => {
+      const itemName = f.item.includes(' — ') ? f.item.split(' — ')[1] : f.item;
+      const spaceName = f.item.includes(' — ') ? f.item.split(' — ')[0] : '';
+      const bc = f.trend==='focus' ? 'badge-focus' : f.trend==='improving' ? 'badge-improving' : 'badge-stable';
+      const bl = f.trend==='focus' ? 'Focus area' : f.trend==='improving' ? 'Improving' : 'Stable';
+      html += `<div class="improve-item">
+        <div style="flex:1">
+          <span class="improve-name">${itemName}</span>
+          ${spaceName ? `<span style="font-size:10px;color:var(--muted);display:block;margin-top:2px">${spaceName}</span>` : ''}
+          <span class="${bc}">${bl}</span>
+        </div>
+        <div class="improve-right">
+          <span class="flag-rate-val">${f.curr}%</span>
+          <span class="prior-rate-val">${f.prior}% prior</span>
+        </div>
+      </div>`;
+    });
+    html += '</div>';
+  }
+  // Walkthrough notes
+  if (cl.notes?.length) {
+    html += '<div class="card"><div class="card-label">Walkthrough notes</div>';
+    cl.notes.forEach(n => {
+      html += `<div style="font-size:12px;color:var(--text);padding:8px 0;border-bottom:0.5px solid var(--border);line-height:1.5">
+        <div style="font-size:10px;color:var(--muted);margin-bottom:3px">${n.campus} · ${n.date} · ${n.role}</div>
+        ${n.note}
+      </div>`;
+    });
+    html += '</div>';
+  }
+
   if (cl.notes?.length) {
     html += '<div class="card"><div class="card-label">Recent notes</div>';
     cl.notes.forEach(n => { html += `<div style="font-size:12px;color:var(--text);padding:6px 0;border-bottom:0.5px solid var(--border)">${n.note}</div>`; });
@@ -434,46 +581,107 @@ function renderReadiness() {
   const subs = (READINESS?.submissions||[]).filter(s =>
     CAMPUSES.includes(s.campus_code) || CAMPUSES.some(c => CAMPUS_NAMES[c]===s.school)
   );
+
   let html = backBar('Classroom Readiness') + '<div class="detail-body">';
-  if (!subs.length) { html += '<div class="no-data">No assessments logged yet.</div></div>'; con.innerHTML=html; return; }
 
-  // Most recent per classroom
-  const byRoom = {};
+  // Build latest map
+  const latest = {};
   subs.forEach(s => {
-    if (!byRoom[s.classroom] || new Date(s.timestamp) > new Date(byRoom[s.classroom].timestamp)) byRoom[s.classroom] = s;
+    const key = (s.campus_code||'') + '|' + s.classroom;
+    if (!latest[key] || new Date(s.timestamp) > new Date(latest[key].timestamp)) latest[key] = s;
   });
-  const rooms = Object.values(byRoom).sort((a,b)=>a.classroom.localeCompare(b.classroom));
 
-  const fully  = rooms.filter(r=>r.assessment==='Fully ready').length;
-  const minor  = rooms.filter(r=>r.assessment==='Ready — minor items remain').length;
-  const notRdy = rooms.filter(r=>r.assessment==='Not ready — return visit needed').length;
+  function formatDate(ts) {
+    if (!ts) return null;
+    const d = ts instanceof Date ? ts : new Date(ts);
+    return isNaN(d) ? null : d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  }
 
-  html += '<div class="card"><div class="card-label">Summary — '+rooms.length+' classroom'+(rooms.length>1?'s':'')+' assessed</div>';
-  html += '<div class="ready-grid">';
-  html += `<div class="ready-stat"><div class="ready-val" style="color:var(--teal)">${fully}</div><div class="ready-lbl">Fully ready</div></div>`;
-  html += `<div class="ready-stat"><div class="ready-val" style="color:var(--amber)">${minor}</div><div class="ready-lbl">Minor items</div></div>`;
-  html += `<div class="ready-stat"><div class="ready-val" style="color:var(--red)">${notRdy}</div><div class="ready-lbl">Return visit</div></div>`;
-  html += '</div></div>';
+  const groups = [
+    { key:'needs',  label:'Not Ready — Return Visit Needed', cls:'needs',
+      filter: (camp,room) => { const s=latest[camp+'|'+room]; return s && s.assessment==='Not ready — return visit needed'; }},
+    { key:'unseen', label:'Not Yet Assessed', cls:'unseen',
+      filter: (camp,room) => !latest[camp+'|'+room] },
+    { key:'minor',  label:'Ready — Minor Items', cls:'minor',
+      filter: (camp,room) => { const s=latest[camp+'|'+room]; return s && s.assessment==='Ready — minor items remain'; }},
+    { key:'full',   label:'Fully Ready', cls:'full',
+      filter: (camp,room) => { const s=latest[camp+'|'+room]; return s && s.assessment==='Fully ready'; }},
+  ];
 
-  // Group by campus code
-  CAMPUSES.forEach(campus => {
-    const campusRooms = rooms.filter(r => r.campus_code===campus || r.school===CAMPUS_NAMES[campus]);
-    if (!campusRooms.length) return;
-    html += `<div class="card"><div class="card-label">${campus}</div>`;
-    campusRooms.forEach(r => {
-      const a = r.assessment||'';
-      let bc='',bt='';
-      if (a==='Fully ready')                        {bc='rb-ready';bt='Fully ready';}
-      else if (a==='Ready — minor items remain')     {bc='rb-minor';bt='Minor items';}
-      else if (a==='Not ready — return visit needed'){bc='rb-flag'; bt='Return visit';}
-      html += `<div class="room-row"><span class="room-name">${r.classroom}</span><span class="rb ${bc}">${bt||'—'}</span></div>`;
+  function campusPanel(campus) {
+    const rooms = CLASSROOMS[campus] || [];
+    if (!rooms.length) return '';
+
+    const needAttn = rooms.filter(r => {
+      const s = latest[campus+'|'+r.name];
+      return !s || s.assessment==='Not ready — return visit needed';
+    }).length;
+    const complete = rooms.filter(r => {
+      const s = latest[campus+'|'+r.name];
+      return s && (s.assessment==='Fully ready'||s.assessment==='Ready — minor items remain');
+    }).length;
+
+    let p = `<div style="display:flex;justify-content:space-between;margin-bottom:16px">
+      <div style="text-align:center"><div style="font-size:22px;font-weight:700;color:var(--red)">${needAttn}</div><div style="font-size:10px;color:var(--muted)">Need attention</div></div>
+      <div style="text-align:center"><div style="font-size:22px;font-weight:700;color:var(--teal)">${complete}</div><div style="font-size:10px;color:var(--muted)">Complete</div></div>
+      <div style="text-align:center"><div style="font-size:22px;font-weight:700;color:var(--navy)">${rooms.length}</div><div style="font-size:10px;color:var(--muted)">Total rooms</div></div>
+    </div>`;
+
+    groups.forEach(g => {
+      const groupRooms = rooms.filter(r => g.filter(campus, r.name));
+      if (!groupRooms.length) return;
+      p += `<div class="cr-section">`;
+      p += `<div class="cr-section-hdr ${g.cls}">${g.label} &nbsp;(${groupRooms.length})</div>`;
+      groupRooms.forEach(r => {
+        const sub = latest[campus+'|'+r.name];
+        const dateStr = sub ? formatDate(sub.timestamp) : null;
+        const dotCls   = g.key==='full'?'dot-full':g.key==='minor'?'dot-minor':g.key==='needs'?'dot-needs':'dot-unseen';
+        const asmntCls = g.key==='full'?'asmnt-full':g.key==='minor'?'asmnt-minor':g.key==='needs'?'asmnt-needs':'';
+        const asmntTxt = g.key==='unseen'?'Not assessed':g.key==='full'?'Fully ready':g.key==='minor'?'Minor items':'Not ready';
+        p += `<div class="cr-row">
+          <div class="cr-left">
+            <div class="cr-dot ${dotCls}"></div>
+            <div>
+              <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+                <span class="cr-name">${r.name}</span>
+                <span class="cr-grade">(${gradeLabel(r.grade)})</span>
+                ${asmntCls?`<span class="cr-assessment ${asmntCls}">${asmntTxt}</span>`:''}
+              </div>
+              ${dateStr?`<div class="cr-date">Last assessment: ${dateStr}</div>`:''}
+            </div>
+          </div>
+        </div>`;
+      });
+      p += '</div>';
     });
-    html += '</div>';
+    return p;
+  }
+
+  // Tabs for the two campuses in the cluster
+  html += `<div class="camp-tabs">
+    <div class="camp-tab active" id="tab-EEC" onclick="switchCampusTab('EEC')">EEC</div>
+    <div class="camp-tab" id="tab-EMC" onclick="switchCampusTab('EMC')">EMC</div>
+  </div>`;
+
+  CAMPUSES.forEach((campus, i) => {
+    html += `<div class="card" id="panel-${campus}" style="${i>0?'display:none':''}">
+      ${campusPanel(campus)}
+    </div>`;
   });
 
   html += '</div>';
   con.innerHTML = html;
 }
+
+function switchCampusTab(campus) {
+  CAMPUSES.forEach(c => {
+    const tab = document.getElementById('tab-'+c);
+    const panel = document.getElementById('panel-'+c);
+    if (tab) tab.classList.toggle('active', c===campus);
+    if (panel) panel.style.display = c===campus ? '' : 'none';
+  });
+}
+
 
 // ── BOOT ─────────────────────────────────────────────────────────────────
 go('home');
