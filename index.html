@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Edgewood Ops Dashboard</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Edgewood">
+<meta name="theme-color" content="#1a3a5c">
+<style>
+:root {
+  --navy:#1a3a5c;--teal:#0d9488;--teal-lt:#e1f5ee;
+  --amber:#f59e0b;--red:#dc2626;--red-lt:#fef2f2;
+  --muted:#94a3b8;--border:rgba(0,0,0,.09);--card:#fff;
+  --bg:#f8fafc;--lt:#f1f5f9;--text:#1e293b;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;-webkit-font-smoothing:antialiased}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text)}
+
+/* HEADER */
+.hdr{background:var(--navy);padding:calc(env(safe-area-inset-top,0px) + 16px) 20px 16px;position:sticky;top:0;z-index:100}
+.hdr-brand{font-size:10px;letter-spacing:1.6px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:4px}
+.hdr-cluster{font-size:20px;font-weight:700;color:#fff}
+.hdr-schools{font-size:12px;color:rgba(255,255,255,.5);margin-top:3px}
+.hdr-meta{font-size:11px;color:rgba(255,255,255,.35);margin-top:2px}
+
+/* SECTION LIST */
+.section-list{padding:20px 16px}
+.section-card{display:flex;align-items:center;gap:14px;background:var(--card);border:0.5px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:10px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.section-card:active{border-color:var(--teal)}
+.section-icon{font-size:22px;flex-shrink:0;width:36px;text-align:center}
+.section-text{flex:1}
+.section-name{font-size:15px;font-weight:600;color:var(--navy)}
+.section-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.section-arrow{font-size:18px;color:var(--teal);font-weight:600}
+
+/* DETAIL */
+.detail{display:none}
+.detail.active{display:block}
+.back-bar{display:flex;align-items:center;gap:10px;padding:14px 16px;background:var(--card);border-bottom:0.5px solid var(--border);cursor:pointer;-webkit-tap-highlight-color:transparent;position:sticky;top:0;z-index:50}
+.back-txt{font-size:14px;color:var(--teal);font-weight:500}
+.back-title{font-size:14px;font-weight:600;color:var(--navy)}
+.detail-body{padding:20px 16px 60px}
+
+/* SHARED */
+.card{background:var(--card);border:0.5px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px}
+.card-label{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.divider{height:0.5px;background:var(--border);margin:16px 0}
+.no-data{font-size:12px;color:var(--muted);font-style:italic;padding:6px 0}
+.error-box{background:#fef2f2;border:0.5px solid #fecaca;border-radius:8px;padding:16px;color:#991b1b;font-size:13px;margin:20px 16px}
+.loading-msg{text-align:center;color:var(--muted);font-size:14px;padding:48px 20px}
+
+/* DRILLS */
+.drill-type-lbl{font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--muted);margin:14px 0 6px}
+.month-row{display:flex;gap:4px;overflow-x:auto;padding-bottom:4px;margin-bottom:4px}
+.month-cell{display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0;min-width:26px}
+.month-lbl{font-size:9px;color:var(--muted)}
+.dot{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700}
+.dot-ok{background:var(--teal);color:#fff}
+.dot-slow{background:var(--amber);color:#fff}
+.dot-none{background:var(--red-lt);color:var(--red)}
+.dot-future{background:var(--lt);color:var(--muted)}
+.last-drill-card{background:var(--lt);border-radius:10px;padding:12px 14px;margin-bottom:10px}
+.last-drill-type{font-size:12px;font-weight:600;color:var(--navy);margin-bottom:8px}
+.stat-line{display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:0.5px solid var(--border)}
+.stat-line:last-child{border-bottom:none}
+.stat-key{color:var(--muted)}
+.stat-val{color:var(--navy);font-weight:500;max-width:60%;text-align:right}
+.stat-val.ok{color:var(--teal)}.stat-val.warn{color:var(--amber)}.stat-val.flag{color:var(--red)}
+
+/* ARRIVAL */
+.session-hdr{font-size:11px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;margin:0 0 10px}
+.session-hdr.arr{color:#085041}.session-hdr.dis{color:#1e40af}
+.r-table{width:100%;border-collapse:collapse;margin-bottom:6px}
+.r-table thead th{font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);padding:0 0 6px;border-bottom:0.5px solid var(--border)}
+.r-table tbody td{padding:7px 0;border-bottom:0.5px solid rgba(0,0,0,.05);vertical-align:middle}
+.r-table tbody tr:last-child td{border-bottom:none}
+.bar-track{height:7px;background:var(--lt);border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px}
+.n-lbl{font-size:10px;margin-top:6px;margin-bottom:10px}
+.flags-title{font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin:14px 0 6px}
+.flag-item{display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:0.5px solid rgba(0,0,0,.05)}
+.flag-item:last-child{border-bottom:none}
+.flag-name{color:var(--navy);flex:1;padding-right:10px}
+.flag-pct{color:var(--red);font-weight:500;flex-shrink:0}
+
+/* CUSTODIAL */
+.sparkline{display:flex;align-items:flex-end;gap:3px;height:44px;margin:10px 0 2px}
+.spark-bar{flex:1;border-radius:2px 2px 0 0;min-height:4px}
+.spark-good{background:var(--teal)}.spark-mid{background:var(--amber)}
+.spark-low{background:var(--red)}.spark-null{background:var(--border)}
+.pct-big{font-size:28px;font-weight:700}
+
+/* READINESS */
+.ready-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.ready-stat{background:var(--lt);border-radius:10px;padding:12px 8px;text-align:center}
+.ready-val{font-size:22px;font-weight:700}
+.ready-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-top:2px;line-height:1.3}
+.room-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:0.5px solid var(--border);font-size:13px}
+.room-row:last-child{border-bottom:none}
+.room-name{color:var(--navy);font-weight:500;flex:1}
+.rb{font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px}
+.rb-ready{background:var(--teal-lt);color:#0f6e56}
+.rb-minor{background:#fefce8;color:#92400e}
+.rb-flag{background:var(--red-lt);color:#991b1b}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-brand">DC Prep</div>
+  <div class="hdr-cluster">Edgewood</div>
+  <div class="hdr-schools">EEC · EMC</div>
+  <div class="hdr-meta" id="meta"></div>
+</div>
+
+<!-- LANDING -->
+<div id="home">
+  <div id="home-loading" class="loading-msg">Loading…</div>
+  <div class="section-list" id="section-list" style="display:none">
+    <div class="section-card" onclick="go('drills')">
+      <div class="section-icon">🚨</div>
+      <div class="section-text">
+        <div class="section-name">Drills</div>
+        <div class="section-sub" id="sub-drills">Evacuation &amp; lockdown compliance</div>
+      </div>
+      <div class="section-arrow">›</div>
+    </div>
+    <div class="section-card" onclick="go('arrival')">
+      <div class="section-icon">🚗</div>
+      <div class="section-text">
+        <div class="section-name">Arrival &amp; Dismissal</div>
+        <div class="section-sub" id="sub-arrival">Last observation window</div>
+      </div>
+      <div class="section-arrow">›</div>
+    </div>
+    <div class="section-card" onclick="go('custodial')">
+      <div class="section-icon">🧹</div>
+      <div class="section-text">
+        <div class="section-name">Custodial</div>
+        <div class="section-sub" id="sub-custodial">Walkthrough completion trend</div>
+      </div>
+      <div class="section-arrow">›</div>
+    </div>
+    <div class="section-card" onclick="go('readiness')">
+      <div class="section-icon">📚</div>
+      <div class="section-text">
+        <div class="section-name">Classroom Readiness</div>
+        <div class="section-sub" id="sub-readiness">BOY readiness by classroom</div>
+      </div>
+      <div class="section-arrow">›</div>
+    </div>
+  </div>
+  <div id="home-error"></div>
+</div>
+
+<!-- DETAIL SCREENS -->
+<div id="d-drills"    class="detail"></div>
+<div id="d-arrival"   class="detail"></div>
+<div id="d-custodial" class="detail"></div>
+<div id="d-readiness" class="detail"></div>
+
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwPbhFWpzKX6S6seb1c0QKplVM22LjZG6bkGMBnTNopry6dDr5YGtffKKR3EsFQ77n5BQ/exec';
+const CLUSTER  = 'Edgewood';   // e.g. 'Anacostia'
+const CAMPUSES = ["EEC", "EMC"];   // e.g. ['AEC','AMC']
+
+let OPS = null, READINESS = null, WIN = 14;
+
+// ── NAVIGATION ──────────────────────────────────────────────────────────
+function go(section) {
+  ['home','d-drills','d-arrival','d-custodial','d-readiness'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.style.display = 'none'; el.classList.remove('active'); }
+  });
+  const dest = section === 'home' ? 'home' : 'd-'+section;
+  const el = document.getElementById(dest);
+  if (el) { el.style.display = ''; el.classList.add('active'); }
+  window.scrollTo(0,0);
+  if (section !== 'home' && OPS) render(section);
+}
+
+function render(s) {
+  if (s==='drills')    renderDrills();
+  if (s==='arrival')   renderArrival();
+  if (s==='custodial') renderCustodial();
+  if (s==='readiness') renderReadiness();
+}
+
+function backBar(title) {
+  return `<div class="back-bar" onclick="go('home')"><span class="back-txt">← Back</span><span class="back-title">${title}</span></div>`;
+}
+
+function e(tag, cls, html) {
+  const el = document.createElement(tag);
+  if (cls) el.className = cls;
+  if (html !== undefined) el.innerHTML = html;
+  return el;
+}
+
+// ── LOAD DATA ────────────────────────────────────────────────────────────
+async function load() {
+  try {
+    const [ops, readiness] = await Promise.all([
+      fetch(SCRIPT_URL+'?view=ops').then(r=>r.json()),
+      fetch(SCRIPT_URL+'?view=readiness').then(r=>r.json()),
+    ]);
+    OPS = ops; READINESS = readiness; WIN = ops.window || 14;
+    document.getElementById('home-loading').style.display = 'none';
+    document.getElementById('section-list').style.display = '';
+    document.getElementById('meta').textContent =
+      new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+    buildSubs();
+  } catch(err) {
+    document.getElementById('home-loading').style.display = 'none';
+    document.getElementById('home-error').innerHTML =
+      `<div class="error-box"><strong>Could not load data.</strong><br>${err.message}</div>`;
+  }
+}
+
+function clusterArr() { return (OPS.arrival||[]).find(c=>c.cluster===CLUSTER); }
+function clusterCust(){ return (OPS.custodial||[]).find(c=>c.cluster===CLUSTER); }
+
+function buildSubs() {
+  // Drills — date of most recent drill across both campuses
+  const lastDates = CAMPUSES.flatMap(cam => {
+    const ld = (OPS.drills?.lastDrills||[]).find(d=>d.campus===cam);
+    return [ld?.evac?.date, ld?.lock?.date].filter(Boolean);
+  });
+  document.getElementById('sub-drills').textContent =
+    lastDates.length ? 'Last drill: ' + lastDates[0] : 'No drills logged yet';
+
+  // A&D
+  const cl = clusterArr();
+  const an = cl?.arrival?.current?.n || 0;
+  const dn = cl?.dismissal?.current?.n || 0;
+  document.getElementById('sub-arrival').textContent =
+    `${an} arrival · ${dn} dismissal obs in last ${WIN} days`;
+
+  // Custodial
+  const cc = clusterCust();
+  document.getElementById('sub-custodial').textContent =
+    cc?.currentPct !== null && cc?.currentPct !== undefined
+      ? `${cc.currentPct}% items checked this period`
+      : 'No walkthroughs logged yet';
+
+  // Readiness
+  const subs = (READINESS?.submissions||[]).filter(s=>CAMPUSES.includes(s.campus_code));
+  const rooms = new Set(subs.map(s=>s.classroom)).size;
+  document.getElementById('sub-readiness').textContent =
+    rooms ? `${rooms} classroom${rooms>1?'s':''} assessed` : 'No assessments logged yet';
+}
+
+// ── DRILLS ───────────────────────────────────────────────────────────────
+function renderDrills() {
+  const con = document.getElementById('d-drills');
+  const months = OPS.drills?.months || [];
+  const syStart = OPS.drills?.syStart || new Date().getFullYear();
+  const today = new Date();
+
+  function dots(statuses) {
+    return months.map((m,mi) => {
+      const yr = m.num>=8 ? syStart : syStart+1;
+      const past = new Date(yr,m.num-1,1) < today;
+      const st = statuses?.[mi] || 'none';
+      const cls = !past ? 'dot-future' : st==='ok' ? 'dot-ok' : st==='slow' ? 'dot-slow' : 'dot-none';
+      const sym = !past ? '' : st==='ok'||st==='slow' ? '✓' : '!';
+      return `<div class="month-cell"><div class="month-lbl">${m.label}</div><div class="dot ${cls}">${sym}</div></div>`;
+    }).join('');
+  }
+
+  let html = backBar('Drills') + '<div class="detail-body">';
+
+  CAMPUSES.forEach(campus => {
+    const comp = (OPS.drills?.compliance||[]).find(d=>d.campus===campus);
+    const last = (OPS.drills?.lastDrills||[]).find(d=>d.campus===campus);
+
+    html += `<div class="card"><div class="card-label">${campus}</div>`;
+    html += `<div class="drill-type-lbl">Evacuation</div>`;
+    html += `<div class="month-row">${dots(comp?.evac)}</div>`;
+    html += `<div class="drill-type-lbl" style="margin-top:16px">Lockdown</div>`;
+    html += `<div class="month-row">${dots(comp?.lock)}</div>`;
+    html += '</div>';
+
+    html += '<div class="card"><div class="card-label">Most recent — '+campus+'</div>';
+    ['evac','lock'].forEach(type => {
+      const drill = last?.[type];
+      const label = type==='evac' ? 'Evacuation' : 'Lockdown';
+      html += `<div class="last-drill-card"><div class="last-drill-type">${label}</div>`;
+      if (!drill) {
+        html += `<div class="no-data">No drill logged yet</div>`;
+      } else {
+        const dc = drill.under10 ? 'ok' : 'warn';
+        const flagLines = drill.flags ? drill.flags.split(';').map(f=>f.trim()).filter(Boolean) : [];
+        html += `<div class="stat-line"><span class="stat-key">Date</span><span class="stat-val">${drill.date}</span></div>`;
+        html += `<div class="stat-line"><span class="stat-key">Duration</span><span class="stat-val ${dc}">${drill.duration}${drill.under10?' ✓':' — over goal'}</span></div>`;
+        if (flagLines.length) {
+          html += `<div class="stat-line" style="align-items:flex-start"><span class="stat-key">Improvement opportunities</span><span class="stat-val flag" style="display:flex;flex-direction:column;gap:3px">${flagLines.map(f=>`<span>${f}</span>`).join('')}</span></div>`;
+        } else {
+          html += `<div class="stat-line"><span class="stat-key">Improvement opportunities</span><span class="stat-val ok">None flagged</span></div>`;
+        }
+        if (drill.notes) html += `<div class="stat-line"><span class="stat-key">Notes</span><span class="stat-val">${drill.notes}</span></div>`;
+      }
+      html += '</div>';
+    });
+    html += '</div>';
+  });
+
+  html += '</div>';
+  con.innerHTML = html;
+}
+
+// ── ARRIVAL ───────────────────────────────────────────────────────────────
+const AD_LABELS = {
+  'Crossing guard present':'Crossing guard coverage',
+  'Arrival / dismissal zones free of obstructions':'Keeping arrival/dismissal zones clear',
+  'No unauthorized vehicles in student loading zones':'Unauthorized vehicles in loading zones',
+  'All staff members at duty posts':'Staff coverage at duty posts',
+  'Staff members attentive — not on phones':'Staff attentiveness during transitions',
+  'Staff behaviors support positive student behaviors and transitions':'Staff behaviors during transitions',
+  'Staff positioned to maximize visibility of students':'Staff positioning for visibility',
+  'Students moving with purpose, minimal crowding':'Student movement and crowding',
+  'Drop-off / pick-up line moving efficiently':'Drop-off / pick-up line efficiency',
+  'Students needing support identified and assisted promptly':'Identifying students who need support',
+};
+const RATINGS = [
+  {label:'Strong',    key:'strong',   color:'#1d9e75'},
+  {label:'OK',        key:'ok',       color:'#2a78d6'},
+  {label:'Needs work',key:'needsWork',color:'#e24b4a'},
+];
+
+function ratingTable(curr, prior) {
+  let t = `<table class="r-table"><thead><tr>
+    <th class="th-name" style="text-align:left;width:80px"></th>
+    <th style="text-align:left"></th>
+    <th style="text-align:right;width:36px;font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);padding:0 0 6px;border-bottom:0.5px solid var(--border)">Last</th>
+    <th style="width:8px;padding:0 0 6px;border-bottom:0.5px solid var(--border)"></th>
+    <th style="text-align:right;width:36px;font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);padding:0 0 6px;border-bottom:0.5px solid var(--border)">Prior</th>
+    <th style="text-align:right;width:32px;font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);padding:0 0 6px;border-bottom:0.5px solid var(--border)">Δ</th>
+  </tr></thead><tbody>`;
+  RATINGS.forEach((r,ri) => {
+    const cp = curr[r.key]||0;
+    const pp = prior ? (prior[r.key]||0) : null;
+    const d = pp!==null ? cp-pp : null;
+    const ds = d===null?'—':d>0?'+'+d:d<0?'−'+Math.abs(d):'0';
+    const dc = d===null||d===0?'var(--muted)':r.key==='needsWork'?(d>0?'var(--red)':'#0f6e56'):(d>0?'#0f6e56':'var(--red)');
+    const last = ri===RATINGS.length-1;
+    t += `<tr style="${last?'':'border-bottom:0.5px solid rgba(0,0,0,.05)'}">
+      <td style="font-size:12px;color:var(--text);padding:7px 10px 7px 0;vertical-align:middle">${r.label}</td>
+      <td style="padding:7px 10px 7px 0;vertical-align:middle"><div class="bar-track"><div class="bar-fill" style="width:${cp}%;background:${r.color}"></div></div></td>
+      <td style="font-size:12px;font-weight:500;color:var(--navy);text-align:right;vertical-align:middle;font-variant-numeric:tabular-nums">${cp}%</td>
+      <td style="font-size:11px;color:var(--border);text-align:center;vertical-align:middle;padding:0 2px">·</td>
+      <td style="font-size:11px;color:var(--muted);text-align:right;vertical-align:middle;font-variant-numeric:tabular-nums">${pp!==null?pp+'%':'—'}</td>
+      <td style="font-size:11px;text-align:right;vertical-align:middle;color:${dc};font-variant-numeric:tabular-nums">${ds}</td>
+    </tr>`;
+  });
+  return t + '</tbody></table>';
+}
+
+function renderArrival() {
+  const con = document.getElementById('d-arrival');
+  const cl = clusterArr();
+  let html = backBar('Arrival &amp; Dismissal') + '<div class="detail-body">';
+  if (!cl) { html += '<div class="no-data">No data available.</div></div>'; con.innerHTML=html; return; }
+
+  ['arrival','dismissal'].forEach(session => {
+    const sData = cl[session];
+    const curr = sData?.current, prior = sData?.prior;
+    const label = session==='arrival' ? 'Arrival' : 'Dismissal';
+    const hcls  = session==='arrival' ? 'arr' : 'dis';
+    html += `<div class="card"><div class="session-hdr ${hcls}">${label}</div>`;
+    if (!curr || curr.n===0) {
+      html += `<div class="no-data">No ${label.toLowerCase()} observations in the last ${WIN} days.</div>`;
+    } else {
+      const low = curr.n < 5;
+      html += ratingTable(curr, prior);
+      html += `<div class="n-lbl" style="color:${low?'#b45309':'var(--muted)'}">n = ${curr.n} (last ${WIN} days)${prior?' · n = '+prior.n+' (prior '+WIN+' days)':''}${low?' &nbsp;⚠ low volume':''}</div>`;
+      if (sData.flags?.length) {
+        html += `<div class="flags-title">Improvement opportunities</div>`;
+        sData.flags.forEach(f => {
+          html += `<div class="flag-item"><span class="flag-name">${AD_LABELS[f.item]||f.item}</span><span class="flag-pct">${f.rate}%</span></div>`;
+        });
+      }
+    }
+    html += '</div>';
+  });
+  html += '</div>';
+  con.innerHTML = html;
+}
+
+// ── CUSTODIAL ─────────────────────────────────────────────────────────────
+function renderCustodial() {
+  const con = document.getElementById('d-custodial');
+  const cl = clusterCust();
+  const cw = cl?.window || WIN;
+  let html = backBar('Custodial') + '<div class="detail-body">';
+  if (!cl) { html += '<div class="no-data">No custodial data available.</div></div>'; con.innerHTML=html; return; }
+
+  const pct = cl.currentPct, prev = cl.priorPct;
+  const pc = pct===null?'var(--muted)':pct>=80?'var(--teal)':pct>=65?'var(--amber)':'var(--red)';
+  html += '<div class="card"><div class="card-label">% items checked</div>';
+  html += `<div class="pct-big" style="color:${pc}">${pct!==null?pct+'%':'—'}</div>`;
+  html += `<div style="font-size:11px;color:var(--muted);margin-top:4px">${cl.n>0?`Based on ${cl.n} walkthrough${cl.n>1?'s':''} in last ${cw} days`:'No walkthroughs in this period'}</div>`;
+  if (prev!==null && pct!==null) {
+    const d=pct-prev;
+    const a=d>=3?'↑':d<=-3?'↓':'→';
+    const ac=d>=3?'var(--teal)':d<=-3?'var(--amber)':'var(--muted)';
+    html += `<div style="font-size:12px;color:var(--muted);margin-top:4px">${a} from <span style="color:${ac}">${prev}%</span> prior period</div>`;
+  }
+  const sparks = (cl.trend||[]).map(m => {
+    if (m.pct===null) return `<div class="spark-bar spark-null" style="height:20%"></div>`;
+    const cls=m.pct>=80?'spark-good':m.pct>=65?'spark-mid':'spark-low';
+    return `<div class="spark-bar ${cls}" style="height:${Math.max(20,m.pct)}%" title="${m.label}: ${m.pct}%"></div>`;
+  }).join('');
+  html += `<div class="sparkline">${sparks}</div>`;
+  const lbls = (cl.trend||[]).map(m=>`<span style="font-size:9px;color:var(--muted);flex:1;text-align:center">${m.label}</span>`).join('');
+  html += `<div style="display:flex;gap:3px">${lbls}</div></div>`;
+
+  if (cl.notes?.length) {
+    html += '<div class="card"><div class="card-label">Recent notes</div>';
+    cl.notes.forEach(n => { html += `<div style="font-size:12px;color:var(--text);padding:6px 0;border-bottom:0.5px solid var(--border)">${n.note}</div>`; });
+    html += '</div>';
+  }
+  html += '</div>';
+  con.innerHTML = html;
+}
+
+// ── READINESS ─────────────────────────────────────────────────────────────
+function renderReadiness() {
+  const con = document.getElementById('d-readiness');
+  const CAMPUS_NAMES = {AEC:'Anacostia Elementary',AMC:'Anacostia Middle',BEC:'Benning Elementary',BMC:'Benning Middle',EEC:'Edgewood Elementary',EMC:'Edgewood Middle'};
+  const subs = (READINESS?.submissions||[]).filter(s =>
+    CAMPUSES.includes(s.campus_code) || CAMPUSES.some(c => CAMPUS_NAMES[c]===s.school)
+  );
+  let html = backBar('Classroom Readiness') + '<div class="detail-body">';
+  if (!subs.length) { html += '<div class="no-data">No assessments logged yet.</div></div>'; con.innerHTML=html; return; }
+
+  // Most recent per classroom
+  const byRoom = {};
+  subs.forEach(s => {
+    if (!byRoom[s.classroom] || new Date(s.timestamp) > new Date(byRoom[s.classroom].timestamp)) byRoom[s.classroom] = s;
+  });
+  const rooms = Object.values(byRoom).sort((a,b)=>a.classroom.localeCompare(b.classroom));
+
+  const fully  = rooms.filter(r=>r.assessment==='Fully ready').length;
+  const minor  = rooms.filter(r=>r.assessment==='Ready — minor items remain').length;
+  const notRdy = rooms.filter(r=>r.assessment==='Not ready — return visit needed').length;
+
+  html += '<div class="card"><div class="card-label">Summary — '+rooms.length+' classroom'+(rooms.length>1?'s':'')+' assessed</div>';
+  html += '<div class="ready-grid">';
+  html += `<div class="ready-stat"><div class="ready-val" style="color:var(--teal)">${fully}</div><div class="ready-lbl">Fully ready</div></div>`;
+  html += `<div class="ready-stat"><div class="ready-val" style="color:var(--amber)">${minor}</div><div class="ready-lbl">Minor items</div></div>`;
+  html += `<div class="ready-stat"><div class="ready-val" style="color:var(--red)">${notRdy}</div><div class="ready-lbl">Return visit</div></div>`;
+  html += '</div></div>';
+
+  // Group by campus code
+  CAMPUSES.forEach(campus => {
+    const campusRooms = rooms.filter(r => r.campus_code===campus || r.school===CAMPUS_NAMES[campus]);
+    if (!campusRooms.length) return;
+    html += `<div class="card"><div class="card-label">${campus}</div>`;
+    campusRooms.forEach(r => {
+      const a = r.assessment||'';
+      let bc='',bt='';
+      if (a==='Fully ready')                        {bc='rb-ready';bt='Fully ready';}
+      else if (a==='Ready — minor items remain')     {bc='rb-minor';bt='Minor items';}
+      else if (a==='Not ready — return visit needed'){bc='rb-flag'; bt='Return visit';}
+      html += `<div class="room-row"><span class="room-name">${r.classroom}</span><span class="rb ${bc}">${bt||'—'}</span></div>`;
+    });
+    html += '</div>';
+  });
+
+  html += '</div>';
+  con.innerHTML = html;
+}
+
+// ── BOOT ─────────────────────────────────────────────────────────────────
+go('home');
+load();
+</script>
+</body>
+</html>
