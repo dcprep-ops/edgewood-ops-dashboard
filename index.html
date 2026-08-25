@@ -345,10 +345,9 @@ function buildSubs() {
 
   // A&D
   const cl = clusterArr();
-  const an = cl?.arrival?.current?.n || 0;
-  const dn = cl?.dismissal?.current?.n || 0;
+  const n = cl?.current?.n || 0;
   document.getElementById('sub-arrival').textContent =
-    `${an} arrival · ${dn} dismissal obs in last ${WIN} days`;
+    `${n} obs in last ${WIN} days`;
 
   // Custodial
   const cc = clusterCust();
@@ -485,27 +484,22 @@ function renderArrival() {
   let html = backBar('Arrival & Dismissal') + '<div class="detail-body">';
   if (!cl) { html += '<div class="no-data">No data available.</div></div>'; con.innerHTML=html; return; }
 
-  ['arrival','dismissal'].forEach(session => {
-    const sData = cl[session];
-    const curr = sData?.current, prior = sData?.prior;
-    const label = session==='arrival' ? 'Arrival' : 'Dismissal';
-    const hcls  = session==='arrival' ? 'arr' : 'dis';
-    html += `<div class="card"><div class="session-hdr ${hcls}">${label}</div>`;
-    if (!curr || curr.n===0) {
-      html += `<div class="no-data">No ${label.toLowerCase()} observations in the last ${WIN} days.</div>`;
-    } else {
-      const low = curr.n < 5;
-      html += ratingTable(curr, prior);
-      html += `<div class="n-lbl" style="color:${low?'#b45309':'var(--muted)'}">n = ${curr.n} (last ${WIN} days)${prior?' · n = '+prior.n+' (prior '+WIN+' days)':''}${low?' &nbsp;⚠ low volume':''}</div>`;
-      if (sData.flags?.length) {
-        html += `<div class="flags-title">Improvement opportunities</div>`;
-        sData.flags.forEach(f => {
-          html += `<div class="flag-item"><span class="flag-name">${AD_LABELS[f.item]||f.item}</span><span class="flag-pct">${f.rate}%</span></div>`;
-        });
-      }
+  const curr = cl.current, prior = cl.prior;
+  html += `<div class="card">`;
+  if (!curr || curr.n===0) {
+    html += `<div class="no-data">No observations in the last ${WIN} days.</div>`;
+  } else {
+    const low = curr.n < 5;
+    html += ratingTable(curr, prior);
+    html += `<div class="n-lbl" style="color:${low?'#b45309':'var(--muted)'}">n = ${curr.n} (last ${WIN} days)${prior?' · n = '+prior.n+' (prior '+WIN+' days)':''}${low?' &nbsp;⚠ low volume':''}</div>`;
+    if (cl.flags?.length) {
+      html += `<div class="flags-title">Improvement opportunities</div>`;
+      cl.flags.forEach(f => {
+        html += `<div class="flag-item"><span class="flag-name">${AD_LABELS[f.item]||f.item}</span><span class="flag-pct">${f.rate}%</span></div>`;
+      });
     }
-    html += '</div>';
-  });
+  }
+  html += '</div>';
   html += '</div>';
   con.innerHTML = html;
 }
