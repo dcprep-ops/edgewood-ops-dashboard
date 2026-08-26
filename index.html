@@ -10,6 +10,7 @@
 <meta name="application-name" content="Edgewood Ops Dashboard">
 <meta name="theme-color" content="#005E9E">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjMDA1RTlFIiByeD0iNiIvPjxyZWN0IHg9IjQiIHk9IjQiIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCIgcng9IjIiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC45KSIvPjxyZWN0IHg9IjE4IiB5PSI0IiB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHJ4PSIyIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuOSkiLz48cmVjdCB4PSI0IiB5PSIxOCIgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiByeD0iMiIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjkpIi8+PHJlY3QgeD0iMTgiIHk9IjE4IiB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHJ4PSIyIiBmaWxsPSJ3aGl0ZSIvPjwvc3ZnPg==">
 <link rel="apple-touch-icon" href="icon.png">
 <meta property="og:title" content="Edgewood Ops Dashboard">
@@ -111,6 +112,25 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 .flag-item:last-child{border-bottom:none}
 .flag-name{color:var(--navy);flex:1;padding-right:10px}
 .flag-pct{color:var(--red);font-weight:500;flex-shrink:0}
+.consistent-pct{color:var(--green);font-weight:500;flex-shrink:0}
+
+/* TRANSPORTATION */
+.metric-table{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:auto auto;gap:0 8px}
+.metric-lbl{font-size:11px;color:var(--muted);line-height:1.35;align-self:end;padding-bottom:5px}
+.metric-val-t{font-size:20px;font-weight:700;color:var(--navy);align-self:start}
+.chart-wrap{position:relative;width:100%;height:200px;margin-bottom:4px}
+.chart-legend{display:flex;gap:16px;margin-bottom:10px}
+.chart-legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+.chart-swatch{width:10px;height:10px;border-radius:2px;display:inline-block;margin-right:4px;vertical-align:middle}
+.issue-table{width:100%;border-collapse:collapse;font-size:13px}
+.issue-table th{font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);text-align:left;padding:0 0 8px;border-bottom:0.5px solid var(--border)}
+.issue-table td{padding:8px 0;border-bottom:0.5px solid var(--border);vertical-align:top}
+.issue-table tr:last-child td{border-bottom:none}
+.td-trunc{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:240px;color:var(--muted)}
+.badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:8px;font-weight:600}
+.badge-warn{background:#fef9c3;color:#92400e}
+.badge-danger{background:var(--red-lt);color:#991b1b}
+.badge-accent{background:var(--teal-lt);color:var(--navy)}
 
 /* CUSTODIAL */
 .sparkline{display:flex;align-items:flex-end;gap:3px;height:44px;margin:10px 0 2px}
@@ -218,14 +238,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 <div id="home">
   <div id="home-loading" class="loading-msg">Loading…</div>
   <div class="section-list" id="section-list" style="display:none">
-    <div class="section-card" onclick="go('drills')">
-      <div class="cell-icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--navy)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
-      <div class="section-text">
-        <div class="section-name">Evacuation &amp; Lockdown Drills</div>
-        <div class="section-sub" id="sub-drills">Evacuation &amp; lockdown compliance</div>
-      </div>
-      <div class="section-arrow">›</div>
-    </div>
     <div class="section-card" onclick="go('arrival')">
       <div class="cell-icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--navy)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v5"/><circle cx="16" cy="17" r="2"/><circle cx="7" cy="17" r="2"/><path d="M5 17H3m14 0h2m-4 0H9"/></svg></div>
       <div class="section-text">
@@ -234,11 +246,27 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
       </div>
       <div class="section-arrow">›</div>
     </div>
+    <div class="section-card" onclick="go('drills')">
+      <div class="cell-icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--navy)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+      <div class="section-text">
+        <div class="section-name">Evacuation &amp; Lockdown Drills</div>
+        <div class="section-sub" id="sub-drills">Evacuation &amp; lockdown compliance</div>
+      </div>
+      <div class="section-arrow">›</div>
+    </div>
     <div class="section-card" onclick="go('custodial')">
       <div class="cell-icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--navy)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10m0 2a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2z"/><path d="M6 10v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4"/><path d="M15 7h.01"/><path d="M18 9h.01"/><path d="M18 5h.01"/><path d="M21 3h.01"/><path d="M21 7h.01"/><path d="M21 11h.01"/><path d="M10 7h1"/></svg></div>
       <div class="section-text">
         <div class="section-name">Custodial Walkthroughs</div>
         <div class="section-sub" id="sub-custodial">Walkthrough completion trend</div>
+      </div>
+      <div class="section-arrow">›</div>
+    </div>
+    <div class="section-card" onclick="go('transport')">
+      <div class="cell-icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--navy)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17a2 2 0 1 0 4 0a2 2 0 1 0-4 0"/><path d="M16 17a2 2 0 1 0 4 0a2 2 0 1 0-4 0"/><path d="M4 17h-2v-11a1 1 0 0 1 1-1h14a5 7 0 0 1 5 7v5h-2m-4 0h-8"/><path d="M16 5l1.5 7h4.5"/><line x1="2" y1="10" x2="17" y2="10"/><line x1="7" y1="5" x2="7" y2="10"/><line x1="12" y1="5" x2="12" y2="10"/></svg></div>
+      <div class="section-text">
+        <div class="section-name">Transportation Pilot</div>
+        <div class="section-sub" id="sub-transport">Loading…</div>
       </div>
       <div class="section-arrow">›</div>
     </div>
@@ -258,6 +286,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 <div id="d-drills"    class="detail"></div>
 <div id="d-arrival"   class="detail"></div>
 <div id="d-custodial" class="detail"></div>
+<div id="d-transport" class="detail"></div>
 <div id="d-readiness" class="detail"></div>
 
 <script>
@@ -266,11 +295,11 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwPbhFWpzKX6S6seb1c0
 const CLUSTER = 'Edgewood';   // e.g. 'Edgewood'
 const CAMPUSES = ["EEC", "EMC"];   // e.g. ['EEC','EMC']
 
-let OPS = null, BOY = {}, WIN = 14;
+let OPS = null, TRANSPORT = null, BOY = {}, WIN = 14;
 
 // ── NAVIGATION ──────────────────────────────────────────────────────────
 function go(section) {
-  ['home','d-drills','d-arrival','d-custodial','d-readiness'].forEach(id => {
+  ['home','d-drills','d-arrival','d-custodial','d-transport','d-readiness'].forEach(id => {
     const el = document.getElementById(id);
     if (el) { el.style.display = 'none'; el.classList.remove('active'); }
   });
@@ -289,6 +318,7 @@ function render(s) {
   if (s==='drills')    renderDrills();
   if (s==='arrival')   renderArrival();
   if (s==='custodial') renderCustodial();
+  if (s==='transport') renderTransport();
   if (s==='readiness') renderReadiness();
 }
 
@@ -309,11 +339,12 @@ function e(tag, cls, html) {
 // ── LOAD DATA ────────────────────────────────────────────────────────────
 async function load() {
   try {
-    const [ops, ...boyResults] = await Promise.all([
+    const [ops, transport, ...boyResults] = await Promise.all([
       fetch(SCRIPT_URL+'?view=ops').then(r=>r.json()),
+      fetch(SCRIPT_URL+'?view=transport').then(r=>r.json()).catch(() => null),
       ...CAMPUSES.map(code => fetch(`${SCRIPT_URL}?view=boy&campus=${code}`).then(r=>r.json())),
     ]);
-    OPS = ops; WIN = ops.window || 14;
+    OPS = ops; TRANSPORT = transport; WIN = ops.window || 14;
     BOY = {};
     CAMPUSES.forEach((code,i) => { BOY[code] = boyResults[i]; });
     document.getElementById('home-loading').style.display = 'none';
@@ -356,6 +387,15 @@ function buildSubs() {
     cc?.currentPct !== null && cc?.currentPct !== undefined
       ? `${cc.currentPct}% items checked this period`
       : 'No walkthroughs logged yet';
+
+  // Transport
+  if (TRANSPORT?.routes?.length) {
+    const r = TRANSPORT.routes[0];
+    document.getElementById('sub-transport').textContent =
+      `${r.daysLogged ?? '—'}% days logged · ${r.handoffsConfirmed ?? '—'}% handoffs confirmed`;
+  } else {
+    document.getElementById('sub-transport').textContent = 'No trip data yet';
+  }
 
   // Readiness (BOY Building Readiness — space readiness across all spaces)
   let rTotal = 0, rDone = 0;
@@ -497,6 +537,12 @@ function renderArrival() {
       const low = curr.n < 5;
       html += ratingTable(curr, prior);
       html += `<div class="n-lbl" style="color:${low?'#b45309':'var(--muted)'}">n = ${curr.n} (last ${WIN} days)${prior?' · n = '+prior.n+' (prior '+WIN+' days)':''}${low?' &nbsp;⚠ low volume':''}</div>`;
+      if (sData.top?.length) {
+        html += `<div class="flags-title" style="margin-top:14px">Most consistent</div>`;
+        sData.top.forEach(t => {
+          html += `<div class="flag-item"><span class="flag-name">${AD_LABELS[t.item]||t.item}</span><span class="consistent-pct">${t.rate}%</span></div>`;
+        });
+      }
       if (sData.flags?.length) {
         html += `<div class="flags-title">Improvement opportunities</div>`;
         sData.flags.forEach(f => {
@@ -579,6 +625,137 @@ function renderCustodial() {
   }
   html += '</div>';
   con.innerHTML = html;
+}
+
+// ── TRANSPORT — ported from the main Ops Dashboard ──────────────────────────
+let ontimeChart = null;
+
+function renderTransport() {
+  const con = document.getElementById('d-transport');
+  let html = backBar('Transportation Pilot') + '<div class="detail-body">';
+  if (!TRANSPORT || !TRANSPORT.routes?.length) {
+    html += '<div class="no-data">No transportation data available yet.</div></div>';
+    con.innerHTML = html;
+    return;
+  }
+
+  TRANSPORT.routes.forEach(route => {
+    html += `<div style="font-size:18px;font-weight:700;color:var(--navy);margin-bottom:14px">${route.label}</div>`;
+    html += `<div class="card"><div class="metric-table">
+        <div class="metric-lbl">Avg ridership</div>
+        <div class="metric-lbl">Days logged</div>
+        <div class="metric-lbl">Handoffs confirmed same day</div>
+        <div class="metric-val-t">${route.avgRidership ?? '—'} <span style="font-size:13px;font-weight:500;color:var(--muted)">of ${route.manifestSize ?? '—'}</span></div>
+        <div class="metric-val-t">${route.daysLogged ?? '—'}%</div>
+        <div class="metric-val-t">${route.handoffsConfirmed ?? '—'}%</div>
+      </div></div>`;
+    html += `<div class="card">
+      <div class="card-label">Morning · TNS → Edgewood</div>
+      <div class="metric-table">
+        <div class="metric-lbl">On-time departure</div>
+        <div class="metric-lbl">Median trip time</div>
+        <div class="metric-lbl">90% of trips under</div>
+        <div class="metric-val-t">${route.am?.onTime ?? '—'}%</div>
+        <div class="metric-val-t">${route.am?.median ?? '—'} min</div>
+        <div class="metric-val-t">${route.am?.p90 ?? '—'} min</div>
+      </div></div>`;
+    html += `<div class="card">
+      <div class="card-label">Afternoon · Edgewood → TNS</div>
+      <div class="metric-table">
+        <div class="metric-lbl">On-time departure</div>
+        <div class="metric-lbl">Median trip time</div>
+        <div class="metric-lbl">90% of trips under</div>
+        <div class="metric-val-t">${route.pm?.onTime ?? '—'}%</div>
+        <div class="metric-val-t">${route.pm?.median ?? '—'} min</div>
+        <div class="metric-val-t">${route.pm?.p90 ?? '—'} min</div>
+      </div></div>`;
+
+    html += `<div class="card">
+      <div class="card-label">On-time arrival performance</div>
+      <div class="chart-legend">
+        <span class="chart-legend-item"><span class="chart-swatch" style="background:#2a78d6"></span>Morning</span>
+        <span class="chart-legend-item"><span class="chart-swatch" style="background:var(--teal)"></span>Afternoon</span>
+      </div>
+      <div class="chart-wrap"><canvas id="transport-chart"></canvas></div>
+    </div>`;
+
+    const issues = route.issues || [];
+    html += `<div class="card"><div class="card-label">Recent issue log</div>`;
+    if (!issues.length) {
+      html += `<div class="no-data">No incidents or delays logged.</div>`;
+    } else {
+      html += `<table class="issue-table">
+        <thead><tr>
+          <th style="width:72px">Date</th>
+          <th style="width:44px">Trip</th>
+          <th style="width:110px">Category</th>
+          <th>Notes</th>
+          <th style="width:90px">Liaison</th>
+        </tr></thead><tbody>`;
+      issues.forEach(i => {
+        const badgeCls = i.category === 'Delay' ? 'badge-danger' : i.category === 'Coverage' ? 'badge-accent' : 'badge-warn';
+        const liaisonCls = i.liaisonConfirmed === 'yes' ? 'style="color:var(--teal);font-weight:500"' : 'style="color:var(--muted)"';
+        const liaisonTxt = i.liaisonConfirmed === 'yes' ? 'Confirmed' : 'Pending';
+        html += `<tr>
+          <td>${i.date}</td>
+          <td>${i.leg?.toUpperCase()}</td>
+          <td><span class="badge ${badgeCls}">${i.category}</span></td>
+          <td class="td-trunc">${i.notes}</td>
+          <td ${liaisonCls}>${liaisonTxt}</td>
+        </tr>`;
+      });
+      html += `</tbody></table>`;
+    }
+    html += `</div>`;
+  });
+
+  html += '</div>';
+  con.innerHTML = html;
+
+  // Render Chart.js line chart
+  const chartEl = document.getElementById('transport-chart');
+  if (chartEl && TRANSPORT.routes?.[0]?.weeklyTrend) {
+    if (ontimeChart) { ontimeChart.destroy(); ontimeChart = null; }
+    const wt = TRANSPORT.routes[0].weeklyTrend;
+    ontimeChart = new Chart(chartEl, {
+      type: 'line',
+      data: {
+        labels: wt.labels,
+        datasets: [
+          { label:'Morning', data: wt.am, borderColor:'#2a78d6', backgroundColor:'#2a78d6', tension:0.3, pointRadius:4 },
+          { label:'Afternoon', data: wt.pm, borderColor:'var(--teal)', backgroundColor:'var(--teal)', tension:0.3, pointRadius:4 },
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { min:70, max:100, ticks:{ callback: v => v+'%' }, grid:{ color:'#e2e8f0' } },
+          x: { grid:{ display: false } }
+        }
+      }
+    });
+  } else if (chartEl) {
+    // Static placeholder until weekly bucketing is built in Apps Script
+    ontimeChart = new Chart(chartEl, {
+      type: 'line',
+      data: {
+        labels: ['Week 1','Week 2','Week 3','Week 4'],
+        datasets: [
+          { label:'Morning', data:[84,88,92,89], borderColor:'#2a78d6', backgroundColor:'#2a78d6', tension:0.3, pointRadius:4 },
+          { label:'Afternoon', data:[90,92,94,93], borderColor:'#0d9488', backgroundColor:'#0d9488', tension:0.3, pointRadius:4 },
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend:{ display:false } },
+        scales: {
+          y: { min:70, max:100, ticks:{ callback: v => v+'%' }, grid:{ color:'#e2e8f0' } },
+          x: { grid:{ display:false } }
+        }
+      }
+    });
+  }
 }
 
 // ── READINESS — ported from the main BOY Readiness Dashboard ───────────────
